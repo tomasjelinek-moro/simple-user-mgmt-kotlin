@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity
 import java.util.*
 
 @SpringBootTest(classes = [TestProjectConfig::class])
-class TrainingProjApplicationTests @Autowired constructor(val testingClient: TestingClient) {
+class EndToEndTests @Autowired constructor(val testingClient: TestingClient) {
 
     @Test
     fun saveUser() {
