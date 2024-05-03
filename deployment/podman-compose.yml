@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  postgres:
+    privileged: true
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ./datadir:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=S3cret
+      - POSTGRES_USER=some_user
+      - POSTGRES_DB=some_db
