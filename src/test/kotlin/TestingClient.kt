@@ -9,7 +9,7 @@ import java.util.*
 interface TestingClient {
 
     @GetMapping("/users")
-    fun users() : List<UserDto>
+    fun users(): List<UserDto>
 
     @PostMapping("/users")
     fun createUser(@RequestBody user: UserDto): ResponseEntity<UserDto>

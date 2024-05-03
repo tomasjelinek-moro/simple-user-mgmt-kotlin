@@ -8,12 +8,12 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 
-@Entity(name="users")
+@Entity(name = "users")
 data class UserDto(
     @Id @GeneratedValue
     val id: UUID,
-
-    val name: String) {
+    val name: String
+) {
 
     constructor() : this(UUID.randomUUID(), "")
     constructor(name: String) : this(UUID.randomUUID(), name)

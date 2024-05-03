@@ -1,6 +1,3 @@
-import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
@@ -10,18 +7,8 @@ plugins {
 
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
-val springCloudVersion = "2023.0.0"
-//
-//java {
-//    sourceCompatibility = JavaVersion.VERSION_21
-//    targetCompatibility = JavaVersion.VERSION_21
-//}
-//
-//kotlin {
-//    compilerOptions {
-//        jvmTarget = Property<String>("21")
-//    }
-//}
+val springCloudVersion = "2023.0.1"
+
 repositories {
     mavenCentral()
 }

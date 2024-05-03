@@ -18,5 +18,4 @@ class UserController(val userService: UserService) {
 
     @PostMapping
     fun createUser(@RequestBody user: UserDto): UserDto = userService.saveUser(user)
-    
 }

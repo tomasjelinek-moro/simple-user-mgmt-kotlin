@@ -18,7 +18,7 @@ class TrainingProjApplicationTests @Autowired constructor(val testingClient: Tes
     @Test
     fun saveUser() {
         val testingName = "testing name - saveUser"
-        val res = testingClient.createUser(UserDto().copy(name=testingName))
+        val res = testingClient.createUser(UserDto().copy(name = testingName))
         assertEquals(testingName, res.nsbody().name)
 
         testingClient.users().filter { it.name == testingName }
@@ -29,31 +29,34 @@ class TrainingProjApplicationTests @Autowired constructor(val testingClient: Tes
         val testingName = "testing name - ensure unique name"
 
         // first time passes
-        assertEquals(HttpStatus.OK, UserDto().copy(name=testingName).safeCallApi(testingClient::createUser))
+        assertEquals(HttpStatus.OK, UserDto().copy(name = testingName).safeCallApi(testingClient::createUser))
 
         // second time does not
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, UserDto().copy(name=testingName).safeCallApi(testingClient::createUser))
+        assertEquals(
+            HttpStatus.UNPROCESSABLE_ENTITY,
+            UserDto().copy(name = testingName).safeCallApi(testingClient::createUser)
+        )
     }
 
     @Test
     fun getUser() {
         val testingName = "testing name - getUser"
-        val res = testingClient.createUser(UserDto().copy(name=testingName)).nsbody()
+        val res = testingClient.createUser(UserDto().copy(name = testingName)).nsbody()
         assertEquals(testingName, testingClient.getUser(res.id).nsbody().name)
     }
 
     @Test
     fun getUser_nonExistingIdReturns404() {
-       assertEquals(HttpStatus.NOT_FOUND, UUID.randomUUID().safeCallApi(testingClient::getUser))
+        assertEquals(HttpStatus.NOT_FOUND, UUID.randomUUID().safeCallApi(testingClient::getUser))
     }
 
     @Test
     fun updateUser() {
         val testingName = "testing name - update user"
         val updatedName = "updated name"
-        val created: UserDto = testingClient.createUser(UserDto().copy(name=testingName)).nsbody()
+        val created: UserDto = testingClient.createUser(UserDto().copy(name = testingName)).nsbody()
 
-        testingClient.updateUser(created.id, created.copy(name=updatedName)).run {
+        testingClient.updateUser(created.id, created.copy(name = updatedName)).run {
             assertEquals(updatedName, nsbody().name)
         }
     }
@@ -61,10 +64,10 @@ class TrainingProjApplicationTests @Autowired constructor(val testingClient: Tes
     @Test
     fun updateUser_sameUsername() {
         val testingName = "testing name - update user"
-        val created: UserDto = testingClient.createUser(UserDto().copy(name=testingName)).nsbody()
+        val created: UserDto = testingClient.createUser(UserDto().copy(name = testingName)).nsbody()
 
-        fun outer (uuid: UUID): (UserDto) -> ResponseEntity<UserDto> {
-            return fun (userDto: UserDto): ResponseEntity<UserDto> {
+        fun outer(uuid: UUID): (UserDto) -> ResponseEntity<UserDto> {
+            return fun(userDto: UserDto): ResponseEntity<UserDto> {
                 return testingClient.updateUser(uuid, userDto)
             }
         }
@@ -84,6 +87,10 @@ class TrainingProjApplicationTests @Autowired constructor(val testingClient: Tes
 
     // ok, I know, this does not make too much sense here. I just wanted to play with extension functions
     fun <T> T.safeCallApi(call: (T) -> ResponseEntity<UserDto>): HttpStatusCode =
-        try { call(this).statusCode } catch (e: FeignClientException) { HttpStatusCode.valueOf(e.status()) }
+        try {
+            call(this).statusCode
+        } catch (e: FeignClientException) {
+            HttpStatusCode.valueOf(e.status())
+        }
 
 }

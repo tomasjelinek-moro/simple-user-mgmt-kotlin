@@ -39,7 +39,8 @@ class ProjectConfig(val userDetailsService: UserDetailsService) {
     fun passwordEncoder(): PasswordEncoder = object : PasswordEncoder {
         override fun encode(rawPassword: CharSequence?): String = rawPassword?.toString() ?: ""
 
-        override fun matches(rawPassword: CharSequence?, encodedPassword: String?): Boolean = rawPassword.toString() == encodedPassword
+        override fun matches(rawPassword: CharSequence?, encodedPassword: String?): Boolean =
+            rawPassword.toString() == encodedPassword
     }
 }
 
