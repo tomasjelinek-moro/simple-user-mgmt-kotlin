@@ -75,14 +75,6 @@ class EndToEndTests @Autowired constructor(val testingClient: TestingClient) {
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, created.safeCallApi(outer(created.id)))
     }
 
-    companion object {
-        @BeforeAll
-        @JvmStatic
-        fun runServer() {
-            runApplication<TrainingProjApplication>()
-        }
-    }
-
     fun ResponseEntity<UserDto>.nsbody(): UserDto = body ?: throw RuntimeException("body should not be null")
 
     // ok, I know, this does not make too much sense here. I just wanted to play with extension functions
@@ -93,4 +85,11 @@ class EndToEndTests @Autowired constructor(val testingClient: TestingClient) {
             HttpStatusCode.valueOf(e.status())
         }
 
+    companion object {
+        @BeforeAll
+        @JvmStatic
+        fun runServer() {
+            runApplication<TrainingProjApplication>()
+        }
+    }
 }

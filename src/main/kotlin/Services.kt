@@ -26,6 +26,6 @@ class UserService(val usersRepository: UsersRepository) {
 @Service
 class UserDetailsServiceImpl : UserDetailsService {
 
-    override fun loadUserByUsername(username: String): UserDetails = UserDetailsImpl(UserDto(username))
+    override fun loadUserByUsername(username: String): UserDetails = UserDetailsImpl(UserDto(name = username))
 
 }

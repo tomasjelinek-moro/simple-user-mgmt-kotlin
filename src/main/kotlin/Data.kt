@@ -11,13 +11,9 @@ import java.util.*
 @Entity(name = "users")
 data class UserDto(
     @Id @GeneratedValue
-    val id: UUID,
-    val name: String
-) {
-
-    constructor() : this(UUID.randomUUID(), "")
-    constructor(name: String) : this(UUID.randomUUID(), name)
-}
+    val id: UUID = UUID.randomUUID(),
+    val name: String = ""
+)
 
 data class UserDetailsImpl(val user: UserDto) : UserDetails {
 
