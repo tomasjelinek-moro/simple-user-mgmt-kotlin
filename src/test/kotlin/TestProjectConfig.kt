@@ -7,9 +7,16 @@ import org.springframework.context.annotation.Bean
 
 @TestConfiguration
 @EnableFeignClients("com.example.usermgmt")
-class TestProjectConfig {
+class InsecureTestProjectConfig {
+
+}
+
+@TestConfiguration
+@EnableFeignClients("com.example.usermgmt")
+class SecureTestProjectConfig {
 
     @Bean
     fun basicAuthRequestInterceptor(): BasicAuthRequestInterceptor = BasicAuthRequestInterceptor("un1", "p1")
 
 }
+

@@ -1,6 +1,7 @@
 package com.example.usermgmt
 
-import feign.FeignException.FeignClientException
+
+import com.example.usermgmt.core.UserDto
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.be
@@ -9,23 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.runApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
-import org.springframework.http.ResponseEntity
 import java.util.*
 
+@SpringBootTest(classes = [InsecureTestProjectConfig::class])
+class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: TestingClient) : ShouldSpec({
 
-@SpringBootTest(classes = [TestProjectConfig::class])
-class EndToEndTests @Autowired constructor(val testingClient: TestingClient) : ShouldSpec({
-    fun ResponseEntity<UserDto>.nullSafeBody(): UserDto = body ?: throw RuntimeException("body should not be null")
-
-    fun <T> T.statusCodeFromApiCall(call: (T) -> ResponseEntity<UserDto>): HttpStatusCode =
-        try {
-            call(this).statusCode
-        } catch (e: FeignClientException) {
-            HttpStatusCode.valueOf(e.status())
-        }
-
-    context("User Creation") {
+    context("Create User") {
         should("create a user when the arguments are correct") {
             val testingName = "testing name - saveUser"
             testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody().userName should be(

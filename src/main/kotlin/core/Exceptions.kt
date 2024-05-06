@@ -1,4 +1,4 @@
-package com.example.usermgmt
+package com.example.usermgmt.core
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus

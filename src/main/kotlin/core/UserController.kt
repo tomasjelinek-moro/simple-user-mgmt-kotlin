@@ -1,4 +1,4 @@
-package com.example.usermgmt
+package com.example.usermgmt.core
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter

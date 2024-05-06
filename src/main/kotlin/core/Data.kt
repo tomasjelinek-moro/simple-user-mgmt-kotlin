@@ -1,4 +1,4 @@
-package com.example.usermgmt
+package com.example.usermgmt.core
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.persistence.Entity

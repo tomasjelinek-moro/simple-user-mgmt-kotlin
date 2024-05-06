@@ -1,5 +1,6 @@
 package com.example.usermgmt
 
+import com.example.usermgmt.core.UserDto
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -19,4 +20,7 @@ interface TestingClient {
 
     @PutMapping("/users/{uuid}")
     fun updateUser(@PathVariable uuid: UUID, @RequestBody user: UserDto): ResponseEntity<UserDto>
+
+    @DeleteMapping("/users-protected/{uuid}")
+    fun deleteUser(@PathVariable uuid: UUID): ResponseEntity<UserDto>
 }
