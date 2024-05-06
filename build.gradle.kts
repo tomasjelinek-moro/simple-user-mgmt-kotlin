@@ -28,6 +28,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.postgresql:postgresql")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
     testImplementation("io.kotest:kotest-runner-junit5:${kotestVersion}")

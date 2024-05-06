@@ -1,5 +1,7 @@
 package com.example.usermgmt
 
+import io.swagger.v3.oas.models.OpenAPI
+import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
@@ -16,12 +18,15 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableWebSecurity
 class ProjectConfig(val userDetailsService: UserDetailsService) {
 
+    val SWAGGER_URLS = listOf("/swagger-ui/**", "/v3/api-docs/**")
+
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http.csrf {
             it.disable()
         }.authorizeHttpRequests {
             it.requestMatchers("/users/**").authenticated()
+            it.requestMatchers(*SWAGGER_URLS.toTypedArray()).permitAll()
             it.anyRequest().permitAll()
         }.authenticationProvider(daoAuthenticationProvider())
             .httpBasic(Customizer.withDefaults())
@@ -42,6 +47,14 @@ class ProjectConfig(val userDetailsService: UserDetailsService) {
         override fun matches(rawPassword: CharSequence?, encodedPassword: String?): Boolean =
             rawPassword.toString() == encodedPassword
     }
+
+    @Bean
+    fun publicApi(): GroupedOpenApi =
+        GroupedOpenApi.builder().group("public-api").pathsToMatch(*arrayOf("/users/**")).build()
+
+    @Bean
+    fun customOpenApi(): OpenAPI = OpenAPI()
+        .info(io.swagger.v3.oas.models.info.Info().title("User Management API").version("1.0.0"))
 }
 
 @SpringBootApplication
