@@ -18,14 +18,16 @@ class UserService(val usersRepository: UsersRepository) {
         usersRepository.findById(id).orElseThrow { UserNotFoundException("User with id $id not found") }
 
     fun UserDto.ensureUnique(action: (UserDto) -> UserDto): UserDto {
-        usersRepository.findByName(name) == null || throw UserManipulationException("User with name $name already exists.")
+        usersRepository.findByUserName(userName) == null || throw UserManipulationException("User with name $userName already exists.")
         return action(this)
     }
 }
 
 @Service
-class UserDetailsServiceImpl : UserDetailsService {
+class UserDetailsServiceImpl(val usersRepository: UsersRepository) : UserDetailsService {
 
-    override fun loadUserByUsername(username: String): UserDetails = UserDetailsImpl(UserDto(name = username))
+    override fun loadUserByUsername(username: String): UserDetails = UserDetailsImpl(
+        usersRepository.findByUserName(username) ?: throw UserNotFoundException("User with name $username not found")
+    )
 
 }

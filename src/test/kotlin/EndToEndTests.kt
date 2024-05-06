@@ -8,9 +8,9 @@ import io.kotest.matchers.should
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.runApplication
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
-import org.springframework.http.HttpStatus
 import java.util.*
 
 
@@ -28,21 +28,27 @@ class EndToEndTests @Autowired constructor(val testingClient: TestingClient) : S
     context("User Creation") {
         should("create a user when the arguments are correct") {
             val testingName = "testing name - saveUser"
-            testingClient.createUser(UserDto().copy(name = testingName)).nullSafeBody().name should be(testingName)
+            testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody().userName should be(
+                testingName
+            )
         }
 
         should("fail when user name is not unique") {
             val testingName = "testing name - ensure unique name"
-            UserDto().copy(name = testingName).statusCodeFromApiCall { testingClient.createUser(it) } should be(HttpStatus.OK)
-            UserDto().copy(name = testingName).statusCodeFromApiCall { testingClient.createUser(it) } should be(HttpStatus.UNPROCESSABLE_ENTITY)
+            UserDto().copy(userName = testingName).statusCodeFromApiCall { testingClient.createUser(it) } should be(
+                HttpStatus.OK
+            )
+            UserDto().copy(userName = testingName).statusCodeFromApiCall { testingClient.createUser(it) } should be(
+                HttpStatus.UNPROCESSABLE_ENTITY
+            )
         }
     }
 
     context("Get User") {
         should("be possible to get the just created user") {
             val testingName = "testing name - getUser"
-            val res = testingClient.createUser(UserDto().copy(name = testingName)).nullSafeBody()
-            testingClient.getUser(res.id).nullSafeBody().name should be(testingName)
+            val res = testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody()
+            testingClient.getUser(res.id).nullSafeBody().userName should be(testingName)
         }
 
         should("fail on 404 when the user does not exist") {
@@ -54,16 +60,17 @@ class EndToEndTests @Autowired constructor(val testingClient: TestingClient) : S
         should("update the user when arguments are correct") {
             val testingName = "testing name - update user"
             val updatedName = "updated name"
-            val created: UserDto = testingClient.createUser(UserDto().copy(name = testingName)).nullSafeBody()
+            val created: UserDto = testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody()
 
-            testingClient.updateUser(created.id, created.copy(name = updatedName)).nullSafeBody().name should be(
+            testingClient.updateUser(created.id, created.copy(userName = updatedName))
+                .nullSafeBody().userName should be(
                 updatedName
             )
         }
 
         should("fail on 422 when the user name is not unique") {
             val testingName = "testing name - update user"
-            val created: UserDto = testingClient.createUser(UserDto().copy(name = testingName)).nullSafeBody()
+            val created: UserDto = testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody()
 
             created.statusCodeFromApiCall {
                 testingClient.updateUser(

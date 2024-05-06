@@ -10,6 +10,6 @@ import org.springframework.context.annotation.Bean
 class TestProjectConfig {
 
     @Bean
-    fun basicAuthRequestInterceptor(): BasicAuthRequestInterceptor = BasicAuthRequestInterceptor("testuser", "pass")
+    fun basicAuthRequestInterceptor(): BasicAuthRequestInterceptor = BasicAuthRequestInterceptor("un1", "p1")
 
 }

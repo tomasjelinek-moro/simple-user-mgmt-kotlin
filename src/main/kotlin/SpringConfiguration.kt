@@ -15,6 +15,7 @@ import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 
@@ -41,14 +42,8 @@ class ProjectConfig(val userDetailsService: UserDetailsService) {
             setPasswordEncoder(passwordEncoder())
         }
 
-    // a dummy implementation of the encoder which keeps the password in cleartext
     @Bean
-    fun passwordEncoder(): PasswordEncoder = object : PasswordEncoder {
-        override fun encode(rawPassword: CharSequence?): String = rawPassword?.toString() ?: ""
-
-        override fun matches(rawPassword: CharSequence?, encodedPassword: String?): Boolean =
-            rawPassword.toString() == encodedPassword
-    }
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
     fun publicApi(): GroupedOpenApi =

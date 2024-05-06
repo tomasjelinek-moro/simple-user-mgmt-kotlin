@@ -16,16 +16,19 @@ data class UserDto(
     val id: UUID = UUID.randomUUID(),
 
     @Schema(title = "A unique name of the user", example = "myUserName", required = true)
-    val name: String = ""
+    val userName: String = "",
+
+    @Schema(title = "The password of the user", example = "some-p4ssw0rd", required = true)
+    val password: String = "",
 )
 
 data class UserDetailsImpl(val user: UserDto) : UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf()
 
-    override fun getPassword(): String = "pass"
+    override fun getPassword(): String = user.password
 
-    override fun getUsername(): String = user.name
+    override fun getUsername(): String = user.userName
 
     override fun isAccountNonExpired(): Boolean = true
 
@@ -39,6 +42,6 @@ data class UserDetailsImpl(val user: UserDto) : UserDetails {
 
 interface UsersRepository : CrudRepository<UserDto, UUID> {
 
-    fun findByName(username: String): UserDto?
+    fun findByUserName(username: String): UserDto?
 
 }
