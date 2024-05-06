@@ -8,6 +8,7 @@ plugins {
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 val springCloudVersion = "2023.0.1"
+val kotestVersion = "5.8.1"
 
 repositories {
     mavenCentral()
@@ -28,6 +29,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+    testImplementation("io.kotest:kotest-runner-junit5:${kotestVersion}")
+    testImplementation("io.kotest:kotest-assertions-core:${kotestVersion}")
 }
 
 buildscript {
@@ -38,8 +42,6 @@ buildscript {
         classpath("org.owasp:dependency-check-gradle:6.5.3")
     }
 }
-
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
-    environment("db_addr", "localhost")
 }
