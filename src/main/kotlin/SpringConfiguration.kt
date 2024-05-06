@@ -1,6 +1,10 @@
 package com.example.usermgmt
 
+import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -18,15 +22,13 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableWebSecurity
 class ProjectConfig(val userDetailsService: UserDetailsService) {
 
-    val SWAGGER_URLS = listOf("/swagger-ui/**", "/v3/api-docs/**")
-
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http.csrf {
             it.disable()
         }.authorizeHttpRequests {
             it.requestMatchers("/users/**").authenticated()
-            it.requestMatchers(*SWAGGER_URLS.toTypedArray()).permitAll()
+            it.requestMatchers(*listOf("/swagger-ui/**", "/v3/api-docs/**").toTypedArray()).permitAll()
             it.anyRequest().permitAll()
         }.authenticationProvider(daoAuthenticationProvider())
             .httpBasic(Customizer.withDefaults())
@@ -54,7 +56,13 @@ class ProjectConfig(val userDetailsService: UserDetailsService) {
 
     @Bean
     fun customOpenApi(): OpenAPI = OpenAPI()
-        .info(io.swagger.v3.oas.models.info.Info().title("User Management API").version("1.0.0"))
+        .info(Info().title("User Management API").version("0.0.1"))
+        .addSecurityItem(SecurityRequirement().addList("basicAuth")).components(
+            Components().addSecuritySchemes(
+                "basicAuth",
+                SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")
+            )
+        )
 }
 
 @SpringBootApplication
