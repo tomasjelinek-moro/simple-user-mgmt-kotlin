@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.Size
 import org.springframework.data.repository.CrudRepository
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -16,9 +18,13 @@ data class UserDto(
     val id: UUID = UUID.randomUUID(),
 
     @Schema(title = "A unique name of the user", example = "myUserName", required = true)
+    @field:NotEmpty(message = "User name must not be empty")
+    @field:Size(max = 255, message = "The user name cant be longer than 255 characters")
     val userName: String = "",
 
     @Schema(title = "The password of the user", example = "some-p4ssw0rd", required = true)
+    @field:NotEmpty(message = "Password must not be empty")
+    @field:Size(max = 255, message = "The password cant be longer than 255 characters")
     val password: String = "",
 )
 

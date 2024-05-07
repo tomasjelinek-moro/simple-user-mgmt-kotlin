@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.runApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import java.util.*
 
 @SpringBootTest(classes = [InsecureTestProjectConfig::class])
@@ -18,43 +17,43 @@ class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: Tes
 
     context("Create User") {
         should("create a user when the arguments are correct") {
-            val testingName = "testing name - saveUser"
-            testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody().userName should be(
-                testingName
-            )
+            with(testingUser()) {
+                testingClient.createUser(this).nullSafeBody().userName should be(userName)
+            }
         }
 
         should("fail when user name is not unique") {
-            val testingName = "testing name - ensure unique name"
-            UserDto(id = UUID.randomUUID(), userName = testingName)
-                .statusCodeFromApiCall { testingClient.createUser(it) } should be(
-                HttpStatus.OK
-            )
-            UserDto(id = UUID.randomUUID(), userName = testingName)
-                .statusCodeFromApiCall { testingClient.createUser(it) } should be(
-                HttpStatus.UNPROCESSABLE_ENTITY
-            )
+            with(testingUser()) {
+                statusCodeFromApiCall { testingClient.createUser(it) } should be(
+                    HttpStatus.OK
+                )
+                copy(id = UUID.randomUUID())
+                    .statusCodeFromApiCall { testingClient.createUser(it) } should be(
+                    HttpStatus.UNPROCESSABLE_ENTITY
+                )
+            }
         }
     }
 
     context("Get User") {
         should("be possible to get the just created user") {
-            val testingName = "testing name - getUser"
-            val res = testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody()
-            testingClient.getUser(res.id).nullSafeBody().userName should be(testingName)
+            with(testingUser()) {
+                val createdUser = testingClient.createUser(this).nullSafeBody()
+                testingClient.getUser(createdUser.id).nullSafeBody().userName should be(userName)
+            }
         }
 
         should("fail on 404 when the user does not exist") {
             UUID(0L, 0L).statusCodeFromApiCall { testingClient.getUser(it) } should be(HttpStatus.NOT_FOUND)
         }
 
-        should("never return the password of the created user") {
+        should("never return the password") {
             with(
-                testingClient.createUser(UserDto(password = "not an empty password", userName = "not empty"))
-                    .nullSafeBody()
+                testingClient.createUser(testingUser()).nullSafeBody()
             ) {
                 password should be("")
-                testingClient.updateUser(id, copy(userName = "other")).nullSafeBody().password should be("")
+                testingClient.updateUser(id, copy(userName = "other", password = "not empty again"))
+                    .nullSafeBody().password should be("")
                 testingClient.getUser(id).nullSafeBody().password should be("")
                 // delete has to be tested in the "authorized" tests
             }
@@ -63,23 +62,20 @@ class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: Tes
 
     context("Update User") {
         should("update the user when arguments are correct") {
-            val testingName = "testing name - update user"
-            val updatedName = "updated name"
-            val created: UserDto = testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody()
-
-            testingClient.updateUser(created.id, created.copy(userName = updatedName))
-                .nullSafeBody().userName should be(
-                updatedName
-            )
+            with(testingClient.createUser(testingUser()).nullSafeBody()) {
+                val updatedName = "updated name"
+                testingClient.updateUser(id, copy(userName = updatedName, password = "not empty"))
+                    .nullSafeBody().userName should be(
+                    updatedName
+                )
+            }
         }
 
         should("fail on 422 when the user name is not unique") {
-            val testingName = "testing name - update user"
-            val created: UserDto = testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody()
-            val newUUID = UUID.randomUUID()
+            val created: UserDto = testingClient.createUser(testingUser()).nullSafeBody()
 
             with(UUID.randomUUID()) {
-                created.copy(this).statusCodeFromApiCall {
+                created.copy(this, password = "not empty").statusCodeFromApiCall {
                     testingClient.updateUser(
                         this,
                         it

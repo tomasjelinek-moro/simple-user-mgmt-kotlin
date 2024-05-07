@@ -16,7 +16,7 @@ class AuthenticatedEndToEndTests @Autowired constructor(val testingClient: Testi
 
     context("Delete User") {
         should("delete the user when present in the db") {
-            with(testingClient.createUser(UserDto()).nullSafeBody()) {
+            with(testingClient.createUser(testingUser()).nullSafeBody()) {
                 statusCodeFromApiCall { testingClient.deleteUser(id) } should be(HttpStatus.OK)
                 statusCodeFromApiCall { testingClient.getUser(id) } should be(HttpStatus.NOT_FOUND)
             }
@@ -27,7 +27,7 @@ class AuthenticatedEndToEndTests @Autowired constructor(val testingClient: Testi
         }
 
         should("never return the password of the deleted user") {
-            with(testingClient.createUser(UserDto()).nullSafeBody()) {
+            with(testingClient.createUser(testingUser()).nullSafeBody()) {
                 testingClient.deleteUser(id).nullSafeBody().password should be("")
             }
         }
