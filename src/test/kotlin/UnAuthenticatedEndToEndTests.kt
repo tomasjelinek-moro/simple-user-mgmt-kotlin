@@ -2,7 +2,6 @@ package com.example.usermgmt
 
 
 import com.example.usermgmt.core.UserDto
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.inspectors.forAll
@@ -101,11 +100,11 @@ class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: Tes
         }
     }
 
-    beforeSpec() {
+    beforeSpec {
         context = runApplication<TrainingProjApplication>()
     }
 
-    afterSpec() {
+    afterSpec {
         context.stop()
     }
 

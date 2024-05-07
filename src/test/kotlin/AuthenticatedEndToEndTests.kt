@@ -35,11 +35,11 @@ class AuthenticatedEndToEndTests @Autowired constructor(val testingClient: Testi
         }
     }
 
-    beforeSpec() {
+    beforeSpec {
         context = runApplication<TrainingProjApplication>()
     }
 
-    afterSpec() {
+    afterSpec {
         context.stop()
     }
 

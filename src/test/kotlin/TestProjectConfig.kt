@@ -7,9 +7,7 @@ import org.springframework.context.annotation.Bean
 
 @TestConfiguration
 @EnableFeignClients("com.example.usermgmt")
-class InsecureTestProjectConfig {
-
-}
+class InsecureTestProjectConfig
 
 @TestConfiguration
 @EnableFeignClients("com.example.usermgmt")
