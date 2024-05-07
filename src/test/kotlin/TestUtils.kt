@@ -15,4 +15,5 @@ fun <T> T.statusCodeFromApiCall(call: (T) -> ResponseEntity<UserDto>): HttpStatu
         HttpStatusCode.valueOf(e.status())
     }
 
-fun testingUser() = UserDto(UUID.randomUUID(), userName = "testing user + ${System.currentTimeMillis()}", password = "testing password")
+fun testingUser() =
+    UserDto(UUID.randomUUID(), userName = "testing user + ${System.currentTimeMillis()}", password = "testing password")

@@ -11,7 +11,7 @@ import java.util.UUID
 @Transactional
 class UserService(val usersRepository: UsersRepository, val passwordEncoder: PasswordEncoder) {
 
-    fun loadUsers(): Iterable<UserDto> = usersRepository.findAll()
+    fun loadUsers(): Iterable<UserDto> = usersRepository.findAll().map { it.clearPassword() }
 
     fun saveUser(user: UserDto): UserDto = user.ensureUniqueUserName {
         usersRepository.save(it.encodePassword()).clearPassword()

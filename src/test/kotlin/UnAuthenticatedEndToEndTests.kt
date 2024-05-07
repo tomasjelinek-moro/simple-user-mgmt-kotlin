@@ -4,7 +4,9 @@ package com.example.usermgmt
 import com.example.usermgmt.core.UserDto
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.be
+import io.kotest.matchers.collections.shouldMatchEach
 import io.kotest.matchers.should
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.runApplication
@@ -56,6 +58,17 @@ class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: Tes
                     .nullSafeBody().password should be("")
                 testingClient.getUser(id).nullSafeBody().password should be("")
                 // delete has to be tested in the "authorized" tests
+            }
+        }
+    }
+
+    context("Get all users") {
+        should("Never return password for loaded users") {
+            testingClient.createUser(testingUser())
+            testingClient.createUser(testingUser())
+
+            testingClient.users().forAll {
+                it.password should be("")
             }
         }
     }

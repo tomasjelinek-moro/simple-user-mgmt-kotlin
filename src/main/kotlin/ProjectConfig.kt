@@ -51,7 +51,7 @@ class ProjectConfig(val userDetailsService: UserDetailsService) {
         GroupedOpenApi.builder().group("protected-api").pathsToMatch("/users-protected/**").build()
 
     @Bean
-    fun protectedOpenApi(): OpenAPI = OpenAPI()
+    fun openApi(): OpenAPI = OpenAPI()
         .info(Info().title("User Management API").version("0.0.1"))
         .addSecurityItem(SecurityRequirement().addList("basicAuth")).components(
             Components().addSecuritySchemes(

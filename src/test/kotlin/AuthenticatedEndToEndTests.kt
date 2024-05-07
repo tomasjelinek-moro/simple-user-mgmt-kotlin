@@ -1,6 +1,5 @@
 package com.example.usermgmt
 
-import com.example.usermgmt.core.UserDto
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.be
