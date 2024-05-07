@@ -2,20 +2,23 @@ package com.example.usermgmt
 
 
 import com.example.usermgmt.core.UserDto
+import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.be
-import io.kotest.matchers.collections.shouldMatchEach
 import io.kotest.matchers.should
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.runApplication
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.http.HttpStatus
 import java.util.*
 
 @SpringBootTest(classes = [InsecureTestProjectConfig::class])
 class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: TestingClient) : ShouldSpec({
+
+    lateinit var context: ConfigurableApplicationContext
 
     context("Create User") {
         should("create a user when the arguments are correct") {
@@ -99,7 +102,11 @@ class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: Tes
     }
 
     beforeSpec() {
-        runApplication<TrainingProjApplication>()
+        context = runApplication<TrainingProjApplication>()
+    }
+
+    afterSpec() {
+        context.stop()
     }
 
 }) {
