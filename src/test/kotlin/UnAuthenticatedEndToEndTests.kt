@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.runApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import java.util.*
 
 @SpringBootTest(classes = [InsecureTestProjectConfig::class])
@@ -25,10 +26,12 @@ class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: Tes
 
         should("fail when user name is not unique") {
             val testingName = "testing name - ensure unique name"
-            UserDto().copy(userName = testingName).statusCodeFromApiCall { testingClient.createUser(it) } should be(
+            UserDto(id = UUID.randomUUID(), userName = testingName)
+                .statusCodeFromApiCall { testingClient.createUser(it) } should be(
                 HttpStatus.OK
             )
-            UserDto().copy(userName = testingName).statusCodeFromApiCall { testingClient.createUser(it) } should be(
+            UserDto(id = UUID.randomUUID(), userName = testingName)
+                .statusCodeFromApiCall { testingClient.createUser(it) } should be(
                 HttpStatus.UNPROCESSABLE_ENTITY
             )
         }
@@ -43,6 +46,18 @@ class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: Tes
 
         should("fail on 404 when the user does not exist") {
             UUID(0L, 0L).statusCodeFromApiCall { testingClient.getUser(it) } should be(HttpStatus.NOT_FOUND)
+        }
+
+        should("never return the password of the created user") {
+            with(
+                testingClient.createUser(UserDto(password = "not an empty password", userName = "not empty"))
+                    .nullSafeBody()
+            ) {
+                password should be("")
+                testingClient.updateUser(id, copy(userName = "other")).nullSafeBody().password should be("")
+                testingClient.getUser(id).nullSafeBody().password should be("")
+                // delete has to be tested in the "authorized" tests
+            }
         }
     }
 
@@ -61,13 +76,16 @@ class UnAuthenticatedEndToEndTests @Autowired constructor(val testingClient: Tes
         should("fail on 422 when the user name is not unique") {
             val testingName = "testing name - update user"
             val created: UserDto = testingClient.createUser(UserDto().copy(userName = testingName)).nullSafeBody()
+            val newUUID = UUID.randomUUID()
 
-            created.statusCodeFromApiCall {
-                testingClient.updateUser(
-                    created.id,
-                    it
-                )
-            } should be(HttpStatus.UNPROCESSABLE_ENTITY)
+            with(UUID.randomUUID()) {
+                created.copy(this).statusCodeFromApiCall {
+                    testingClient.updateUser(
+                        this,
+                        it
+                    )
+                } should be(HttpStatus.UNPROCESSABLE_ENTITY)
+            }
         }
     }
 

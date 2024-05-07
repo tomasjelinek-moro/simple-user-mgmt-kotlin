@@ -16,13 +16,20 @@ class AuthenticatedEndToEndTests @Autowired constructor(val testingClient: Testi
 
     context("Delete User") {
         should("delete the user when present in the db") {
-            val created: UserDto = testingClient.createUser(UserDto()).nullSafeBody()
-            created.statusCodeFromApiCall { testingClient.deleteUser(created.id) } should be(HttpStatus.OK)
-            created.statusCodeFromApiCall { testingClient.getUser(created.id) } should be(HttpStatus.NOT_FOUND)
+            with(testingClient.createUser(UserDto()).nullSafeBody()) {
+                statusCodeFromApiCall { testingClient.deleteUser(id) } should be(HttpStatus.OK)
+                statusCodeFromApiCall { testingClient.getUser(id) } should be(HttpStatus.NOT_FOUND)
+            }
         }
 
         should("fail on 404 when the user does not exist ") {
             UUID(0L, 0L).statusCodeFromApiCall { testingClient.deleteUser(it) } should be(HttpStatus.NOT_FOUND)
+        }
+
+        should("never return the password of the deleted user") {
+            with(testingClient.createUser(UserDto()).nullSafeBody()) {
+                testingClient.deleteUser(id).nullSafeBody().password should be("")
+            }
         }
     }
 
