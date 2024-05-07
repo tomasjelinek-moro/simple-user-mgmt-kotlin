@@ -17,4 +17,3 @@ class SecureTestProjectConfig {
     fun basicAuthRequestInterceptor(): BasicAuthRequestInterceptor = BasicAuthRequestInterceptor("un1", "p1")
 
 }
-
